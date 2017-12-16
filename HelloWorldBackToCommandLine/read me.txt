@@ -1,0 +1,227 @@
+................................................................................
+. Project setup ................................................................
+................................................................................
+
+1] Create a folder for new project, example "HelloWorldCommandLine".
+2] Create "_certificate" and "no_xmal" folder in your project folder.
+
+_certificate
+--> Folder for certificate files.
+
+no_xmal
+--> Folder for source files.
+
+................................................................................
+. Create certificate files .....................................................
+................................................................................
+
+1] Open Visual Studio Developer command prompt as Administrator.
+2] "cd" to "_certificate" folder.
+
+MakeCert.exe -n "CN=astromedicomp.org" -r -a sha1 -sv astromedicomp.org.pvk astromedicomp.org.cer -ss root
+
+MakeCert.exe
+--> Create certificate
+
+-n "CN=astromedicomp.org"
+--> Microsoft standard certificate name. "CN" stands for company name. This name and publisher name in application manifest file must be same.
+
+-r
+--> Indicates root certificate.
+
+-a sha1
+--> Encryption algorithm. We are using "sha1" and this is default.
+
+-sv astromedicomp.org.pvk astromedicomp.org.cer
+--> Subject volume. "astromedicomp.org.pvk" is Private key file and "astromedicomp.org.cer" is Certificate file names.
+
+-ss root
+--> Which store to use. As we are creating "root" certificate hence we are using "root" as store.
+
+................................................................................
+. Install certificate in personal store ........................................
+................................................................................
+
+--> Use above command but with different parameters to install certificate.
+
+MakeCert.exe -n "CN=astromedicomp.org" -a sha1 -iv astromedicomp.org.pvk -ic astromedicomp.org.cer -sk "astromedicomp.org.container" -sr currentuser -ss My
+
+-iv astromedicomp.org.pvk
+--> Issuer's private key file.
+
+-ic astromedicomp.org.cer
+--> Issuer's certificate file.
+
+-sk "astromedicomp.org.container"
+--> Subject key container name.
+
+-sr currentuser
+--> Registry location.
+
+-ss My
+--> Name of store in which certificate to install.
+
+................................................................................
+. Verify certificate ...........................................................
+................................................................................
+
+dir Cert:\CurrentUser\My
+
+--> "My" is name of store which we have used while installing the certificate.
+
+--> Output
+
+    Directory: Microsoft.PowerShell.Security\Certificate::CurrentUser\My
+
+
+Thumbprint                                Subject
+----------                                -------
+27C9C9E33BC429C73F3EC2BA4B31CE1BBB126D47  CN=astromedicomp.org
+
+................................................................................
+. Creating Personal Exchange Format file (pfx file) ............................
+................................................................................
+
+PKCS12 is standard (Package Key Certificate Standard).
+
+pvk2pfx -pvk astromedicomp.org.pvk -spc astromedicomp.org.cer -pfx astromedicomp.org.pfx -po <password>
+
+pvk2pfx
+--> Create pfx file. 
+
+pvk astromedicomp.org.pvk
+--> Private key file.
+
+-spc astromedicomp.org.cer
+--> Software publisher Certificate file.
+
+-pfx astromedicomp.org.pfx
+--> pfx file name.
+
+-po password
+--> pfx file password.
+
+................................................................................
+. Assets and AppxManifest ......................................................
+................................................................................
+ 
+Copy "Assets" folder and "Package.appxmanifest" file from existing project to "no_xmal" folder. Rename "Package.appxmanifest" to "AppxManifest.xml".
+
+It will be best if you create this files by hand :P
+
+Also save all your source files in "no_xmal" folder.
+
+................................................................................
+. Compiling ....................................................................
+................................................................................
+
+1] "cd" to "no_xmal" folder.
+
+cl.exe /c /ZW /EHsc HelloWorldBackToCommandLine.cpp
+
+/ZW
+--> We are using this as we are compiling this code for WinRT.
+
+................................................................................
+. Linking ......................................................................
+................................................................................
+
+cl.exe /MD HelloWorldBackToCommandLine.obj /link /APPCONTAINER RuntimeObject.lib /SUBSYSTEM:Windows 
+
+RuntimeObject.lib
+--> WinRT standard library.
+
+................................................................................
+. Creating a package............................................................
+................................................................................
+
+1] Create a folder where your all source files are i.e. in "no_xmal" folder.
+For example we create "package" folder in "no_xmal" folder.
+
+2] Changes in AppxManifest.xml
+
+	--> In Identity tag
+		a] Change GUID for "Name" field. Create new GUID using "guidgen.exe" tool.
+		b] Change Certificate publisher name for "Publisher" field.
+		c] Change "Version" as you need.
+
+	--> In Resources->Resources tag.
+		a] Change "x-generated" to "en-US" [Your locale] for "Language" field.
+
+	--> In Applications->Application tag
+		a] Change the executable name for "Id" field [Executable name without extension].
+		b] Change executable name for "Executable" field.
+		c] Change "EntryPoint" [Class extending "Application" class].
+
+	--> In Applications->Application->m2:VisualElements
+		a] Change "DisplayName" whatever you want.
+		b] Change assets name as per file names in "Assets" folder.
+
+3] Copy following files to "package" folder.
+
+	a] Assets folder [Change names of images in AppxManifest.xml]
+	b] AppxManifest.xml [Rename Package.appxmanifest file to AppxManifest.xml]
+	c] Executable file
+
+4] Now create the Appx package.
+
+MakeAppx pack /d <package folder> /p <appx package name>
+
+example:
+MakeAppx pack /d package /p HelloWorldBackToCommandLine.appx
+
+This "HelloWorldBackToCommandLine.appx" file is called as unsigned package. We have to sign this package.
+
+................................................................................
+. Signing the package by certificate ...........................................
+................................................................................
+
+signtool.exe sign /fd sha256 /sha1 <Thumbprint> <app package file name>
+
+example:
+signtool.exe sign /fd sha256 /sha1 27C9C9E33BC429C73F3EC2BA4B31CE1BBB126D47 HelloWorldBackToCommandLine.appx
+
+signtool.exe
+--> Signing tool.
+
+sign
+--> Indicates to sign the package. 
+
+/fd sha256
+--> Specifies the file digest algorithm to use for creating file
+
+/sha1 <Thumbprint>
+--> Algorithm using which certificate was created. 
+
+To get "Thumbprint" follow "Verify certificate" step and get your certificate's thumbprint.
+
+................................................................................
+. Installing package ...........................................................
+................................................................................
+
+--> Install package certificate.
+
+1] Open "Explorer" and go to folder where HelloWorldBackToCommandLine.appx file is. i.e. in "no_xmal" folder.
+2] Right click and open properties of HelloWorldBackToCommandLine.appx file.
+3] Go to "Digital Signature" tab.
+4] Select your certificate and click on "Details".
+5] Select "View Certificate".
+6] Select "Install Certificate".
+7] Select "Local Machine" and click "Next".
+8] Select "Place all certificate in the following store" and select "Browse".
+9] Select "Trusted People" and click "Ok".
+10] Select "Next".
+11] Select "Finish".
+12] You will get success message.
+
+--> Deploy package.
+
+1] Open poweshell as Administrator.
+2] "cd" to the folder where your "HelloWorldBackToCommandLine.appx" file is.
+3] Execute this command:
+	Add-AppxPackage .\HelloWorldBackToCommandLine.appx
+4] Go to start menu and run your application.
+
+................................................................................
+. Welcome Back To Command Line :D ..............................................
+................................................................................

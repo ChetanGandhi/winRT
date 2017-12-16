@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+
+  <Identity Name="C6A42F3E-C51E-41F5-BB42-17C1D5D7F160"
+            Publisher="CN=astromedicomp.org"
+            Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>BackToCommandLine</DisplayName>
+    <PublisherDisplayName>astromedicomp.org::hackBoot</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.scale-100.png</Logo>
+  </Properties>
+
+  <Prerequisites>
+    <OSMinVersion>6.3.0</OSMinVersion>
+    <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
+  </Prerequisites>
+
+  <Resources>
+    <Resource Language="en-US"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="HelloWorldBackToCommandLine"
+        Executable="HelloWorldBackToCommandLine.exe"
+        EntryPoint="HelloWorldBackToCommandLine">
+        <m2:VisualElements
+            DisplayName="HelloWorldBackToCommandLine"
+            Square150x150Logo="Assets\Logo.scale-100.png"
+            Square30x30Logo="Assets\SmallLogo.scale-100.png"
+            Description="HelloWorldBackToCommandLine"
+            ForegroundText="light"
+            BackgroundColor="#464646">
+            <m2:SplashScreen Image="Assets\SplashScreen.scale-100.png" />
+        </m2:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>

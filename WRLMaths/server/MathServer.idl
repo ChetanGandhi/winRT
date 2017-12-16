@@ -1,0 +1,37 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+#define VERSION 1.0
+
+namespace MathServer
+{
+	interface ISquare;
+	interface ICube;
+	runtimeclass CMath;
+
+	//interface ISquare: IInspectable
+	[uuid(FC681092-D99E-4BF5-A1D1-177A2504154E), version(VERSION), exclusiveto(CMath)]
+
+	interface ISquare: IInspectable
+	{
+		HRESULT SquareOfInteger([in] int number, [out, retval] int* square);
+	}
+
+	//interface ICube: IInspectable
+	[uuid(4E8D9D98-4F78-4250-A860-F4AC04C5D30E), version(VERSION), exclusiveto(CMath)]
+
+	interface ICube: IInspectable
+	{
+		HRESULT CubeOfInteger([in] int number, [out, retval] int* cube);
+	}
+
+	[version(VERSION), activatable(VERSION)]
+
+	runtimeclass CMath
+	{
+		// CLSID is given my Midlrt.exe
+		
+		[default] interface ISquare;
+				  interface ICube;
+	}
+}

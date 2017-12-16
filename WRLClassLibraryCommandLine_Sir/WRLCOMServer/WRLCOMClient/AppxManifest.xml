@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
+    <Identity Name="19FCEE41-9F91-431A-85C4-06AC38935CE9"
+            Publisher="CN=astromedicomp.org"
+            Version="1.0.0.0"/>
+  <Properties>
+    <DisplayName>WRLCOMClient</DisplayName>
+    <PublisherDisplayName>Dr. Vijay D. Gokhale</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Prerequisites>
+    <OSMinVersion>6.3.0</OSMinVersion>
+    <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
+  </Prerequisites>
+
+  <Resources>
+    <Resource Language="en-us"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+                 Executable="WRLCOMClient.exe"
+                 EntryPoint="WRLCOMClient">
+      <VisualElements DisplayName="WRLCOMClient"
+                      Logo="Assets\Logo.png"
+                      SmallLogo="Assets\SmallLogo.png"
+                      Description="HelloWorldByCode"
+                      ForegroundText="light"
+                      BackgroundColor="#464646">
+        <DefaultTile ShortName="allLogos"/>
+        <SplashScreen Image="Assets\SplashScreen.png"/>
+      </VisualElements>
+    </Application>
+  </Applications>
+</Package>

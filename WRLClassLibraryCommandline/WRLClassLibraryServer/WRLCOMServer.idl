@@ -1,0 +1,37 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+// No ";" at end of all "}"
+
+namespace WRLCOMServer
+{
+	interface ISum;
+	interface ISubtract;
+	runtimeclass CSumSubtract;
+
+	//interface ISum:IInspectable
+	[uuid(EC948884-BEBC-44EA-8D11-FA53F41825A6), version(1.0), exclusiveto(CSumSubtract)]
+	
+	interface ISum:IInspectable
+	{
+		HRESULT SumOfTwoInteger([in]int numberOne, [in]int numberTwo, [out, retval] int* psum);
+	}
+
+	//interface ISubtract:IInspectable
+	[uuid(8249E6A4-2CF0-409F-A9A9-90E7C0DB667A), version(1.0), exclusiveto(CSumSubtract)]
+	
+	interface ISubtract:IInspectable
+	{
+		HRESULT SubtractionOfTwoInteger([in]int numberOne, [in]int numberTwo, [out, retval] int* psubtract);
+	}
+
+	[version(1.0), activatable(1.0)]
+
+	runtimeclass CSumSubtract
+	{
+		// CLSID is give by Midlrt.exe
+
+		[default] interface ISum;
+				  interface ISubtract;
+	}
+}

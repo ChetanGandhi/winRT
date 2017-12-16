@@ -1,0 +1,48 @@
+1] Writing IDL file.
+
+Server name: WRLCOMServer
+Client name: WRLCOMClient
+Class name: CSumSubtract
+Methods name: SumOfTwoInteger, SubtractionOfTwoInteger
+
+2] Compiling IDL to create required files. 
+
+cd to the folder where IDL file is.
+
+Midlrt.exe <idl file path> /metadata_dir <path of platform neutral folder path> /winrt /ns_prefix /h "WRLCOMServer_h.h" /winmd "WRLCOMServer.winmd"
+
+Midlrt.exe WRLCOMServer.idl /metadata_dir "C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /winrt /ns_prefix /h "WRLCOMServer_h.h" /winmd "WRLCOMServer.winmd"
+
+output files:
+
+dlldata.c, WRLCOMServer.winmd, WRLCOMServer_h.h, WRLCOMServer_i.c, WRLCOMServer_p.c
+
+3] Mearging WRLCOMServer.winmd file with windows.winmd file to all it to be used on all platform
+
+mdmerge.exe /metadata_dir "C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /o:./temp /i:. -v -partial
+
+/o:./temp --> mearged winmd file is crated in "temp" folder in current folder.
+-v --> validation of my winmd file while mearging with windows.winmd.
+-partial --> resolve static synbols now and if error found, validate at runtime.
+
+4] Writing server code.
+
+- Write server cpp file.
+
+5] Compile server cpp file.
+
+cl.exe /c /EHsc /AI <path> /D WINAPI_PARTITION_APP /D _USRDLL
+
+cl.exe /c /EHsc /AI "C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /D WINAPI_PARTITION_APP /D _USRDLL WRLCOMServer.cpp
+
+/AI --> Additional includes.
+/D --> Define macros or constants. Use this when we have to use conditional compilation at command line.
+WINAPI_PARTITION_APP --> This macro is only for matro application.
+_USRDLL --> Options. Which macros should compiler should use for MFC application. 
+
+6] Link
+link.exe WRLCOMServer.obj /OUT:WRLCOMServer.dll /APPCONTAINER RuntimeObject.lib /SUBSYSTEM:CONSOLE /Machine:x86 /DLL
+
+7] Client
+
+
